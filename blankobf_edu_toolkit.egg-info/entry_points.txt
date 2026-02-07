@@ -1,0 +1,3 @@
+[console_scripts]
+blankobf = blankobf.cli:main
+blankobf-gui = blankobf.gui:main

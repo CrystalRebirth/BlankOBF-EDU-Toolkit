@@ -1,0 +1,1 @@
+These are example assets that can be encrypted into a bundle.\n

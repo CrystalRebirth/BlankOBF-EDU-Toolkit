@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "blankobf-edu-toolkit"
+version = "0.1.0"
+description = "Educational Python obfuscation + bundle encryption toolkit (responsible, non-malicious)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name="BlankOBF Community"}]
+dependencies = ["cryptography>=41.0.0"]
+
+[project.scripts]
+blankobf-gui = "blankobf.gui:main"
+blankobf = "blankobf.cli:main"
+
+[project.optional-dependencies]
+gui = ["customtkinter>=5.2.0", "tkinterdnd2>=0.4.2", "pygments>=2.16.0"]
