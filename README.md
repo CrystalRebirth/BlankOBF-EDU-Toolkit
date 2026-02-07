@@ -1,103 +1,103 @@
 # BlankOBF EDU Toolkit
 
-An **educational** open-source toolkit for learning about:
+This project started as a personal learning experiment and slowly turned into a full toolkit.
 
-- Python **AST transforms** (renaming identifiers, encoding constants, attribute indirection, etc.)
-- How “packing layers” work (clearly labeled as a learning module)
-- **Legitimate encryption** for files/asset bundles using modern, audited cryptography (**AEAD**)
+BlankOBF EDU Toolkit is a graphical application that lets you:
 
-## Responsible scope
+- obfuscate Python scripts  
+- encrypt files and folders  
+- decrypt them again  
+- build simple EXE/BAT distributions  
 
-This project is intended for **learning and defensive/commercial IP protection** patterns (e.g., protecting assets/configs).
-It is **not** designed for stealth, persistence, or executing downloaded/external payloads.
+Everything is wrapped in a modern, beginner-friendly GUI.
 
-By default, the obfuscator runs in **AST-only** mode (`--no-pack`). Packing layers exist for educational exploration.
+---
 
-## Crypto choices (legit, modern)
+## Why this project exists
 
-This project implements **Authenticated Encryption with Associated Data (AEAD)**:
+I wanted to understand:
 
-- **AES-256-GCM**
-- **ChaCha20-Poly1305** (RFC 8439)
+- how Python code obfuscation works  
+- how real encryption systems are built  
+- how tools like PyInstaller package applications  
 
-For password-based encryption, we use a strong KDF:
+Instead of just reading about it, I decided to build a practical tool that shows all of this in action.
 
-- **scrypt** (salted; parameters configurable)
+The goal is **education and legitimate software protection**, not anything shady.
 
-### Why AEAD?
-AEAD gives you **confidentiality + integrity** (tamper detection). “Encrypt without authentication” is a common footgun.
+---
 
-## Install
+## What it can do
 
-```bash
-pip install -e .
-```
+### Python Obfuscation
 
-## Obfuscate (educational)
+- AST-based transformations  
+- rename variables and identifiers  
+- encode constants  
+- add dummy structures  
+- optional experimental XOR layer  
+- configurable recursion  
+- reproducible results via seed  
 
-AST-only (recommended):
-```bash
-blankobf obfuscate -i examples/basic.py -o /tmp/basic_obf.py --seed 123 --report /tmp/report.json --no-pack
-```
+Result: your script stays runnable, but much harder to read.
 
-Enable packing layers (educational; slower and easier to reverse by design):
-```bash
-blankobf obfuscate -i examples/basic.py -o /tmp/basic_packed.py --seed 123 --report /tmp/report.json
-```
+---
 
-## Encrypt bundles (recommended “real” protection)
+### File Encryption
 
-Create an encrypted bundle from a folder:
-```bash
-blankobf bundle-encrypt --in-dir examples/assets --out-file /tmp/assets.bobf --alg chacha20 --kdf scrypt
-```
+Supports real, modern cryptography only:
 
-Decrypt bundle:
-```bash
-blankobf bundle-decrypt --in-file /tmp/assets.bobf --out-dir /tmp/assets_out
-```
+- ChaCha20-Poly1305  
+- AES-256-GCM  
+- AES-SIV  
 
-## Run tests
+You can combine layers if you want to experiment.
 
-```bash
-python -m unittest -v
-```
+Features:
 
-## Project layout
+- password-based encryption  
+- safe overwrite mode with `.bak` backup  
+- decrypt-to-temp option  
+- works with any file type  
 
-- `blankobf/` core package
-  - `engine.py` pipeline runner + context
-  - `transforms/` AST transforms (teaching-friendly)
-  - `layers/` packing layers (educational)
-  - `crypto/` legitimate bundle encryption
-- `tests/` round-trip tests
-- `examples/` small programs + assets
+Important:  
+Encrypted `.py` files are **not runnable** until decrypted again.  
+Obfuscation keeps code runnable, encryption does not.
 
-## License
+---
 
-MIT
-\n\n## GUI (modern CustomTkinter)\n\nInstall GUI extras:\n\n```bash\npip install -e .[gui]\n```\n\nRun the GUI:\n\n```bash\npython run_app.py\n# or\nblankobf-gui\n```\n
+### Folder Bundles
 
-### GUI extras
-The GUI uses CustomTkinter. Drag&drop uses `tkinterdnd2` and syntax highlighting uses `pygments`.
+You can encrypt an entire folder into a single container file:
+
+- packs all files  
+- keeps structure  
+- encrypts everything as one unit  
+- restores it exactly on decryption  
+
+The output format is `.bobf` (BlankOBF bundle file).
+
+---
+
+### Simple Compiler Tools
+
+Convenience features for distributing scripts:
+
+- create a small `.bat` launcher  
+- build standalone `.exe` files using PyInstaller  
+- optional custom icon  
+
+Nothing fancy – just practical helpers.
+
+---
+
+## Running it
+
+Requirements:
+
+- Python 3.10 or newer  
+
+Install dependencies:
 
 ```bash
 pip install -e .[gui]
-python run_app.py
-```
-
-
-### Theme + Icon
-The GUI uses a **grey/white** theme (CustomTkinter JSON theme) and sets the window icon from `blankobf/assets/icon.ico` (Windows) and `blankobf/assets/icon.png` (fallback).
-
-
-## Multi-layer encryption (educational)
-You can apply **more than one** authenticated encryption layer to a bundle.
-Example (apply in order):
-
-```bash
-blankobf bundle-encrypt --in-dir examples/assets --out-file assets.bobf --algs chacha20,aesgcm
-```
-
-Additional option:
-- `aessiv` (AES-SIV) is nonce-misuse resistant (if your `cryptography` build includes it).
